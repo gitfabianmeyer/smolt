@@ -1,4 +1,4 @@
 .ipynb_checkpoints
 *.zip
-./idea
-./toolbox-CPT
+.idea/
+toolbox-CPT/
