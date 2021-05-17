@@ -1,0 +1,17 @@
+# uni/bigrams of output tags
+# unigram: |output tag| x |all possible strings expanded with a macro|
+# bigram:  |output tag| x |output tag| x |all possible strings expanded with a macro|
+
+# Unigram columns
+# column 0: time (-2/-1/0/1/2), column 1: column in inut data
+#U00:%x[0,0]
+#U11:%x[-2,1]
+#U21:%x[-1,1]
+U31:%x[0,1]
+#U41:%x[1,1]
+#U51:%x[2,1]
+#U62:%x[-2,1]/%x[-1,1]
+#U72:%x[1,1]/%x[2,1]
+
+# Bigram on last column (dynamic)
+#B
