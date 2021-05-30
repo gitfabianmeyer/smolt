@@ -1,0 +1,9 @@
+1c) I am not sure what is meant by this exercise, as we didn't do anything related in practice class, because the example was not present in the
+training data.
+In case you want to see the probability based on wordcounts: 1 / 18 * 1 / 18 * 3 /18 = 3/5832 = 1 / 1944
+
+1d)
+I would decide to smooth the emission probabilities, as smoothing the state transitions would controdict the grammar rule of the considered language.
+Of course, this also means giving probabilities to words which are not a grammatical tag ( e.g. dog for verb) but this is in my opinion still 
+more reasonable than giving the sequence determinant - determinant a probability (for englisch). Especially as the POS Tags are finite and 
+reasonable training data will cover most of the combinations of a language-
