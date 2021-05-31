@@ -1,9 +1,150 @@
-1c) I am not sure what is meant by this exercise, as we didn't do anything related in practice class, because the example was not present in the
-training data.
+Fabian Meyer, Marcus Rottschäfer, Delzar Habash
+
+1c) I am not sure what is meant by this exercise, as we didn't do anything related in practice class, because the example was not present in the training data.
 In case you want to see the probability based on wordcounts: 1 / 18 * 1 / 18 * 3 /18 = 3/5832 = 1 / 1944
 
 1d)
-I would decide to smooth the emission probabilities, as smoothing the state transitions would controdict the grammar rule of the considered language.
+I would decide to smooth the emission probabilities, as smoothing the state transitions would contradict the grammar rule of the considered language.
 Of course, this also means giving probabilities to words which are not a grammatical tag ( e.g. dog for verb) but this is in my opinion still 
-more reasonable than giving the sequence determinant - determinant a probability (for englisch). Especially as the POS Tags are finite and 
-reasonable training data will cover most of the combinations of a language-
+more reasonable than giving the sequence determinant - determinant a probability (for english). Especially as the POS Tags are finite and 
+reasonable training data will cover most of the combinations of a language.
+
+
+2) a) 
+U11:%x[-1,1]
+U21:%x[0,1]
+U31:%x[1,1]
+B
+––– –––
+
+Train command: 
+crf_learn -m 200 -f 1 pc5.template train.medium.data pc5d.medium.model
+
+Number of sentences: 1874
+Number of features:  3040
+Number of thread(s): 8
+Freq:                1
+eta:                 0.00010
+C:                   1.00000
+shrinking size:      20
+
+iter=72 terr=0.07358 serr=0.64888 act=3040 obj=9163.26864 diff=0.00002
+
+Eval command: 
+crf_test -m pc5d.medium.model vali.medium.data | perl conlleval.pl
+processed 51328 tokens with 25927 phrases; found: 26000 phrases; correct: 22878.
+accuracy:  92.64%; precision:  87.99%; recall:  88.24%; FB1:  88.12
+
+Test command:
+crf_test -m pc5d.medium.model test.medi
+um.data | perl conlleval.pl
+processed 9586 tokens with 4880 phrases; found: 4905 phrases; correct: 4361.
+accuracy:  93.07%; precision:  88.91%; recall:  89.36%; FB1:  89.14
+
+2b)
+Train command :
+ crf_learn -m 200 -f 1 pc5.template train.medium.data pc5d.medium.unigram.model
+Number of sentences: 1874
+Number of features:  2640
+Number of thread(s): 8
+Freq:                1
+eta:                 0.00010
+C:                   1.00000
+shrinking size:      20
+
+iter=45 terr=0.08508 serr=0.74013 act=2640 obj=14128.72933 diff=0.00004
+
+ crf_test -m pc5d.medium.unigram.model
+vali.medium.data | perl conlleval.pl
+processed 51328 tokens with 25927 phrases; found: 26737 phrases; correct: 22615.
+accuracy:  91.69%; precision:  84.58%; recall:  87.23%; FB1:  85.88
+
+crf_test -m pc5d.medium.unigram.model test.medium.data | perl conlleval.pl
+processed 9586 tokens with 4880 phrases; found: 5065 phrases; correct: 4331.
+accuracy:  92.37%; precision:  85.51%; recall:  88.75%; FB1:  87.10
+
+2c)
+
+Experiment 1: Bad Choice of features
+Config: 
+U11:%x[-1,1]
+U21:%x[-1,1]
+U31:%x[1,1]
+U51:%x[2,1]
+B
+
+Training:
+Number of sentences: 1874
+Number of features:  3940
+Number of thread(s): 8
+Freq:                1
+eta:                 0.00010
+C:                   1.00000
+shrinking size:      20
+iter=77 terr=0.23612 serr=0.97279 act=3940 obj=28317.58155 diff=0.00005
+
+Eval:
+processed 51328 tokens with 25927 phrases; found: 25243 phrases; correct: 15226.
+accuracy:  75.85%; precision:  60.32%; recall:  58.73%; FB1:  59.51
+
+
+
+Experiment 2: Better Choice, but not as good as from a)
+
+
+U11:%x[-1,1]
+U21:%x[0,1]
+U31:%x[1,1]
+U51:%x[-1,1]
+B
+
+Training: 
+Number of sentences: 1874
+Number of features:  3940
+Number of thread(s): 8
+Freq:                1
+eta:                 0.00010
+C:                   1.00000
+shrinking size:      20
+
+iter=80 terr=0.07329 serr=0.65048 act=3940 obj=9057.33284 diff=0.00007
+
+Eval:
+processed 51328 tokens with 25927 phrases; found: 25951 phrases; correct: 22876.
+accuracy:  92.71%; precision:  88.15%; recall:  88.23%; FB1:  88.19
+
+
+
+
+Experiment 3: Better F1 on validation data
+
+U11:%x[-1,0]
+U21:%x[-1,0]
+U31:%x[0,1]
+U41:%x[-1,0]
+U72:%x[1,1]
+
+# Bigram on last column (dynamic)
+B
+
+Train: 
+Number of sentences: 1874
+Number of features:  455500
+Number of thread(s): 8
+Freq:                1
+eta:                 0.00010
+C:                   1.00000
+shrinking size:      20
+iter=91 terr=0.03425 serr=0.44610 act=455500 obj=6615.74589 diff=0.00005
+
+Eval: 
+processed 51328 tokens with 25927 phrases; found: 25906 phrases; correct: 22940.
+accuracy:  92.96%; precision:  88.55%; recall:  88.48%; FB1:  88.52
+
+
+
+2d)
+processed 9586 tokens with 4880 phrases; found: 4897 phrases; correct: 4401.
+accuracy:  93.66%; precision:  89.87%; recall:  90.18%; FB1:  90.03
+
+The model seems to be robust, as the better score on validation data do transfer to a better result on the test data.
